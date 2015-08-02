@@ -1,0 +1,106 @@
+for debian users its 'easy' to create their own libopencv-nonfree package.
+
+i followed the opencv tutorial for python, but in my debian the SIFT and SURF modules were missing. And there is no non-free package available for debian including SIFT and SURF etc.
+
+They were stripped from the package due to license issues....
+
+i never created a package for debian before (adding a new module etc) but i followed some small steps in the debian tutorials and tried and guessed around a bit, and after 1 day, voila... i got working a libopencv-nonfree2.4 deb package and a python module with correct bindings.
+
+(i dont know if i also needed to install the newly built python-opencv package or only the nonfree... i re-installed both and got a working python opencv library with all necessary nonfree modules!)
+
+ok, here it is:
+
+!this is for libopencv 2.4!
+
+!you can do all steps except installing as a normal user!
+
+we need the built essesntials and some tools from debian repository to compile and create a new package:
+
+sudo apt-get install build-essential fakeroot devscripts
+create a directory in your home and change to that directory:
+
+cd ~ && mkdir opencv-debian
+cd opencv-debian
+download the needed packages:
+
+apt-get source libopencv-core2.4
+and download all needed dependency packages to build the new opencv
+
+apt-get build-dep libopencv-core2.4
+this will download the neeeded sources and create a directory called "opencv-2.4.9.1+dfsg"
+
+change to that directory:
+
+cd opencv-2.4.9.1+dfsg
+now you can test if the package will built without modifications by typing:
+
+fakeroot debian/rules binary
+this will take a long time! this step should finish without errors you now have a lot of .deb packages in your opencv-debian directory
+
+now we make some modifications to the package definition to let debian buld the nonfree modules and package!
+
+change to the opencv-debian directory and download the correct opencv source.. in my case opencv 2.4.9 or so
+
+i got mine from https://github.com/Itseez/opencv/releases
+
+wget https://codeload.github.com/Itseez/opencv/tar.gz/2.4.9
+this will download opencv-2.4.9.tar.gz
+
+extract the archive:
+
+tar -xzvf opencv-2.4.9.tar.gz
+this will unpack the original source to a directory called opencv-2.4.9
+
+now copy the nonfree modules from original source to the debian source:
+PAREI AQUI
+cp -rv opencv-2.4.9/modules/nonfree opencv-2.4.9.1+dfsg/modules/
+ok, now we have the source of the nonfree modules, but thats not enough for debian... we need to modify 1 file and create a new one
+
+we have to edit the debian control file and add a new section at end of file: (i use mcedit as an editor here)
+
+mcedit opencv-2.4.9.1+dfsg/debian/control
+or use any other editor of your choice
+
+and add this section:
+
+Package: libopencv-nonfree2.4
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: OpenCV Nonfree Modules like SIFT and SURF
+ This package contains nonfree modules for the OpenCV (Open Computer Vision)
+ library.
+ .
+ The Open Computer Vision Library is a collection of algorithms and sample
+ code for various computer vision problems. The library is compatible with
+ IPL (Intel's Image Processing Library) and, if available, can use IPP
+ (Intel's Integrated Performance Primitives) for better performance.
+ .
+ OpenCV provides low level portable data types and operators, and a set
+ of high level functionalities for video acquisition, image processing and
+ analysis, structural analysis, motion analysis and object tracking, object
+ recognition, camera calibration and 3D reconstruction.
+now we create a new file called libopencv-nonfree2.4.install
+
+touch opencv-2.4.9.1+dfsg/debian/libopencv-nonfree2.4.install
+and edit:
+
+mcedit opencv-2.4.9.1+dfsg/debian/libopencv-nonfree2.4.install
+and add the following content:
+
+usr/lib/*/libopencv_nonfree.so.*
+ok, thats it, now create the packages again:
+
+cd opencv-2.4.9.1+dfsg
+first a clean up:
+
+fakeroot debian/rules clean
+and build:
+
+fakeroot debian/rules binary
+et voila... after a while you have a fresh built and a new package libopencv-nonfree2.4.deb!
+
+now install as root:
+
+dpkg -i libopencv-nonfree2.4.deb
+dpkg -i python-opencv.deb
+and test!
