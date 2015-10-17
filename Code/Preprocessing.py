@@ -14,7 +14,7 @@ def improveImage(wImage):
     gray= cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
     gray = cv2.threshold(gray, 0, 255, cv2.THRESH_OTSU)[1]
     cv2.imwrite('improveImage-1.jpg',gray)
-    print 'gray'
+    #print 'gray'
     return gray
 
 
@@ -38,7 +38,7 @@ def skeletonization(wGray):
         if zeros==size:
             done = True
     cv2.imwrite('skeletonization-1.jpg',skeletonization_img)
-    print('fim skeletonization-1')
+    #print('fim skeletonization-1')
     return skeletonization_img
     
 
@@ -47,7 +47,7 @@ def createKeyPoints(wImage):
     kp = sift.detect(wImage,None)
     keyPoints=cv2.drawKeypoints(wImage,kp)
     cv2.imwrite('createKeyPoints-1.jpg',keyPoints)
-    print('Saved Image-createKeyPoints-1')
+    #print('Saved Image-createKeyPoints-1')
     return keyPoints
 
 

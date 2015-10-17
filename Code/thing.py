@@ -1,3 +1,5 @@
-from skimage import morphology
-import cv2
+def teste():
+    print 'teste'
+
+teste()
 

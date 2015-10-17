@@ -92,6 +92,7 @@ def displayKeypoints(wImage):
     imm=cv2.drawKeypoints(im, kp);
     cv2.imwrite('display_keypoints.jpg',imm)
     print('display keypoints')
+    return imm
     
  
 displayKeypoints('createKeyPoints-1.jpg')
