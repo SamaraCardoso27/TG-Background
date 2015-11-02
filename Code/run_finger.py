@@ -89,7 +89,7 @@ def getImage():
 			vect = bytearray(pBuffer.raw)
 			outputIm = Image.new("RGB", (ImageSize.nWidth, ImageSize.nHeight))
 			outputIm.putdata(vect)
-			base_name = str(datetime.datetime.now()).replace(':','_').replace('/','_')+'.jpeg'
+			base_name = '/home/samara/Documentos/TG/Amostras/Valter/Valter1'+str(datetime.datetime.now()).replace(':','_').replace('/','_')+'.jpeg'
 			img = outputIm.save(base_name)
 			#image_64 = base64.encodestring(open(img,"rb").read())
 			#image_64 = unicode(base64.encodestring(open(img,"rb").read()))
