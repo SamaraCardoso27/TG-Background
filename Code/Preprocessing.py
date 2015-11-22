@@ -12,81 +12,55 @@ import time
 
 
 def improveImage(wImage):
-    ini = time.time()
     img = cv2.imread(wImage)
     gray= cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
     gray = cv2.threshold(gray, 0, 255, cv2.THRESH_OTSU)[1]
-    cv2.imwrite('/home/samara/Documentos/TG/Amostras/Aline/Aline1-improveImage-1.jpg',gray)
-    fim = time.time()
-    #print 'Tempo - Inicio: '+ str(ini)
-    #print 'Tempo - Fim: '+ str(fim)
-    #print 'Tempo - improveImage: '+ str(fim-ini)
-    #print 'gray'
     return gray
 
 
 
 
 def skeletonization(wGray):
-    ini = time.time()
     image = wGray
     size = np.size(image)
     skeletonization_img = np.zeros(image.shape,np.uint8)
-     
     ret,image = cv2.threshold(image,127,255,0)
     element = cv2.getStructuringElement(cv2.MORPH_CROSS,(3,3))
     done = False
-     
     while(not done):
         eroded = cv2.erode(image,element)
         temp = cv2.dilate(eroded,element)
         temp = cv2.subtract(image,temp)
         skeletonization_img = cv2.bitwise_or(skeletonization_img,temp)
         image = eroded.copy()
-     
         zeros = size - cv2.countNonZero(image)
         if zeros==size:
             done = True
-    cv2.imwrite('/home/samara/Documentos/TG/Amostras/Valter/Valter1-skeletonization-1.jpg',skeletonization_img)
-    fim = time.time()
-    #print 'Tempo - Inicio: '+ str(ini)
-    #print 'Tempo - Fim: '+ str(fim)
-    #print 'Tempo - skeletonization'+ str(fim-ini)
-    #print('fim skeletonization-1')
     return skeletonization_img
     
 
 def createKeyPoints(wImage):
-    ini = time.time()
     sift = cv2.SIFT(100)
     kp = sift.detect(wImage,None)
     keyPoints=cv2.drawKeypoints(wImage,kp)
-    cv2.imwrite('/home/samara/Documentos/TG/Amostras/Valter/Valter1-createKeyPoints-1.jpg',keyPoints)
-    fim = time.time()
-    #print 'Tempo - Inicio: '+ str(ini)
-    #print 'Tempo - Fim: '+ str(fim)
-    #print 'Tempo - createKeyPoints'+ str(fim-ini)
-    #print('Saved Image-createKeyPoints-1')
+    cv2.imwrite('createKeyPoints.jpg',keyPoints)
     return kp
 
 
 
     
 def encryptFingerprint(keyPoints):
-    #d=cv2.FeatureDetector_create("SIFT")
-    #kp=d.detect(keyPoints)
+    d=cv2.FeatureDetector_create("SIFT")
+    kp=d.detect(keyPoints)
     key = []
     insert_key = []
     keypoint = ''
-    
     for i in keyPoints:
         keypoint = str(i.pt)
         key.append(keypoint)
-    
     len_key = len(key)
     for i in range(len_key):
         insert_key.append(hashlib.md5(key[i]).hexdigest())
-
     pontos = (','.join(str(e) for e in insert_key))
     return pontos
 
